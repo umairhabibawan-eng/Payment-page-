@@ -17,44 +17,58 @@
     .alert-box { background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; text-align: left; font-size: 13px; margin: 10px 0; border: 1px solid #ffeeba; }
     input[type="text"] { width: 100%; padding: 12px; border: 1px solid #cccccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; margin-top: 5px; }
     .btn-submit { width: 100%; background: #28a745; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+    
+    /* Success Screen Styling */
+    .success-box { display: none; padding: 30px 15px; text-align: center; }
+    .success-box h2 { color: #28a745; font-size: 24px; margin-bottom: 15px; }
+    .success-box p { color: #555; font-size: 15px; line-height: 1.5; }
   </style>
 </head>
 <body>
 
-<div class="timer">
-  Link expires in <span id="time">05:00</span>
-</div>
-
 <div class="card">
-  <div class="step-header">Step 1 : Copy Payment Details</div>
-  
-  <div class="field">
-    <span>Customer: <br><strong>Credit Apple</strong></span>
-    <button class="btn-copy" onclick="copyText('Credit Apple')">Copy</button>
+  <!-- Payment Main Page -->
+  <div id="payment-page">
+    <div class="timer">
+      Link expires in <span id="time">05:00</span>
+    </div>
+
+    <div class="step-header">Step 1 : Copy Payment Details</div>
+    
+    <div class="field">
+      <span>Customer: <br><strong>Credit Apple</strong></span>
+      <button class="btn-copy" onclick="copyText('Credit Apple')">Copy</button>
+    </div>
+
+    <div class="field">
+      <span>Amount: <br><span class="amount">₹6500</span></span>
+      <button class="btn-copy" onclick="copyText('6500')">Copy</button>
+    </div>
+
+    <div class="field">
+      <span>UPI ID: <br><strong>Mrcb26733@nyes</strong></span>
+      <button class="btn-copy" onclick="copyText('Mrcb26733@nyes')">Copy</button>
+    </div>
+
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=Mrcb26733@nyes%26pn=Credit%20Apple%26am=6500%26cu=INR" alt="QR Code">
+    </div>
+
+    <div class="step-header">Step 2 : Complete Payment</div>
+    <div class="alert-box">
+      Do not use old payment details. Complete the transfer immediately.
+    </div>
+
+    <div class="step-header">Step 3 : Enter UTR / Reference Number</div>
+    <input type="text" id="utr-input" placeholder="Enter 12-digit UTR" maxlength="12">
+    <button class="btn-submit" onclick="submitPayment()">Submit Payment</button>
   </div>
 
-  <div class="field">
-    <span>Amount: <br><span class="amount">₹6500</span></span>
-    <button class="btn-copy" onclick="copyText('6500')">Copy</button>
+  <!-- Success Message Screen -->
+  <div id="success-page" class="success-box">
+    <h2>✔ Payment Submitted</h2>
+    <p>Your payment is being verified.<br>Please allow a few minutes for confirmation.</p>
   </div>
-
-  <div class="field">
-    <span>UPI ID: <br><strong>Mrcb26733@nyes</strong></span>
-    <button class="btn-copy" onclick="copyText('Mrcb26733@nyes')">Copy</button>
-  </div>
-
-  <div class="qr-box">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=Mrcb26733@nyes%26pn=Credit%20Apple%26am=6500%26cu=INR" alt="QR Code">
-  </div>
-
-  <div class="step-header">Step 2 : Complete Payment</div>
-  <div class="alert-box">
-    Do not use old payment details. Complete the transfer immediately.
-  </div>
-
-  <div class="step-header">Step 3 : Enter UTR / Reference Number</div>
-  <input type="text" placeholder="Enter 12-digit UTR" maxlength="12">
-  <button class="btn-submit">Submit UTR</button>
 </div>
 
 <script>
@@ -74,10 +88,22 @@
       if (--timer < 0) { timer = 0; }
     }, 1000);
   }
+
   window.onload = function () {
     var fiveMinutes = 60 * 5, display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
   };
+
+  function submitPayment() {
+    var utr = document.getElementById('utr-input').value;
+    if (utr.trim().length === 0) {
+      alert('Please enter UTR number.');
+      return;
+    }
+    // Form hide karke submitted page show hoga
+    document.getElementById('payment-page').style.display = 'none';
+    document.getElementById('success-page').style.display = 'block';
+  }
 </script>
 
 </body>
